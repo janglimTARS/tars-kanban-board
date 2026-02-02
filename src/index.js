@@ -202,49 +202,78 @@ const HTML = `<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kanban Board</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #1e1e2e;
+      --surface-hover: #27293d;
+      --text: #f8f9fa;
+      --text-secondary: #a0a0a0;
+      --border: rgba(255,255,255,0.1);
+      --accent: #5b8def;
+      --accent-hover: #4d7be2;
+      --success: #238636;
+      --warning: #bb8009;
+      --error: #da3633;
+      --radius: 12px;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+    h1, h2, h3 {
+      font-weight: 700;
+    }
+  </style>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen p-8 antialiased overflow-x-auto">
+<body class="bg-[var(--bg)] text-[var(--text)] min-h-screen p-8 antialiased overflow-x-auto">
 
   <!-- Login Modal -->
-  <div id="loginModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-    <div class="bg-gray-900 border border-gray-700 p-10 rounded-2xl shadow-2xl max-w-sm w-full mx-4">
-      <h2 class="text-2xl font-bold text-gray-100 mb-8 text-center">Enter API Key</h2>
-      <input id="apiKeyInput" type="password" placeholder="Your secret API key..." class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-colors">
-      <button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-4 px-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-        Access Kanban
+  <div id="loginModal" class="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 hidden">
+    <div class="bg-[var(--surface)] border border-[var(--border)] p-6 rounded-xl shadow-md max-w-sm w-full mx-4">
+      <h2 class="text-xl font-bold text-[var(--text)] mb-6 text-center">Authenticate</h2>
+      <input id="apiKeyInput" type="password" placeholder="API key" class="w-full bg-[var(--surface)] border border-[var(--border)] p-3 rounded-lg text-sm placeholder:text-[var(--text-secondary)] mb-4 focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)] transition-all">
+      <button onclick="login()" class="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--text)] font-semibold py-3 px-6 rounded-lg shadow-sm hover:shadow-md transition-all">
+        Enter Board
       </button>
     </div>
   </div>
 
   <!-- Main App -->
   <div id="app" class="hidden max-w-7xl mx-auto">
-    <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-16 gap-6">
-      <h1 class="text-4xl md:text-5xl font-bold text-gray-100">
-        TARS KANBAN
+    <header class="sticky top-0 z-40 bg-[var(--bg)]/95 backdrop-blur-sm flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-6 pt-8 pb-6 rounded-b-xl shadow-lg border-b border-[var(--border)] -mx-8 px-8 lg:-mx-0 lg:px-0 lg:rounded-none">
+      <h1 class="text-3xl lg:text-4xl font-bold text-[var(--text)]">
+        Kanban Board
       </h1>
       <div class="flex items-center gap-4">
-        <select id="viewSelect" class="bg-gray-800 border border-gray-700 px-4 py-2 rounded-lg text-lg font-medium focus:outline-none focus:ring-2 ring-blue-500 focus:border-blue-500">
-          <option value="kanban">Kanban Board</option>
-          <option value="dashboard">Subagents Dashboard</option>
+        <select id="viewSelect" class="bg-[var(--surface)] border border-[var(--border)] px-4 py-2 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)]">
+          <option value="kanban">Kanban</option>
+          <option value="dashboard">Subagents</option>
         </select>
-        <button onclick="addNewTask()" class="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all">+ New Task</button>
+        <input id="searchInput" type="text" placeholder="Search tasks..." class="flex-1 max-w-sm min-w-[250px] bg-[var(--surface)] border border-[var(--border)] px-4 py-2 rounded-lg placeholder:text-[var(--text-secondary)] text-sm focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)]">
+        <button onclick="addNewTask()" class="bg-[var(--success)] hover:bg-[var(--success)]/90 text-white px-6 py-2.5 rounded-lg font-semibold shadow-sm hover:shadow-md transition-all min-w-[120px]">+ New Task</button>
         <button onclick="logout()" class="bg-red-600 hover:bg-red-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all">Logout</button>
       </div>
     </header>
 
     <!-- Kanban View -->
-    <div id="kanbanView" class="flex gap-8 pb-20 flex-wrap lg:flex-nowrap">
+    <div id="kanbanView" class="flex gap-6 pb-12 flex-wrap lg:flex-nowrap overflow-x-auto -mr-8 pr-8 lg:mr-0 lg:pr-0 scrollbar-thin scrollbar-thumb-[var(--surface)] scrollbar-track-transparent">
       <div class="column flex-1 min-w-[320px]" data-status="todo">
-        <h2 class="text-2xl font-bold text-white mb-8 pb-4 border-b border-gray-700 text-center">To Do</h2>
+        <h2 class="text-xl font-bold text-[var(--text)] mb-6 pb-2.5 border-b border-[var(--border)] text-center">To Do</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
       <div class="column flex-1 min-w-[320px]" data-status="inprogress">
-        <h2 class="text-2xl font-bold text-white mb-8 pb-4 border-b border-gray-700 text-center">In Progress</h2>
+        <h2 class="text-2xl font-bold text-white mb-8 pb-4 border-[var(--border)] text-center">In Progress</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
       <div class="column flex-1 min-w-[320px]" data-status="done">
-        <h2 class="text-2xl font-bold text-white mb-8 pb-4 border-b border-gray-700 text-center">Done</h2>
+        <h2 class="text-2xl font-bold text-white mb-8 pb-4 border-[var(--border)] text-center">Done</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
     </div>
@@ -257,18 +286,18 @@ const HTML = `<!DOCTYPE html>
   </div>
 
   <!-- Task Edit Modal -->
-  <dialog id="taskModal" class="backdrop:bg-black/80 p-0 m-0 backdrop:backdrop-blur-md">
-    <div class="bg-gray-900/95 border border-gray-700 rounded-3xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl shadow-black/50">
-      <h3 id="modalTitle" class="text-2xl font-bold mb-8 text-gray-100">New Task</h3>
-      <input id="taskTitleInput" placeholder="Task Title" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl mb-6 text-xl focus:outline-none focus:ring-2 ring-blue-500/50 focus:border-blue-500 placeholder:text-gray-500">
-      <textarea id="taskDescInput" placeholder="Description / Instructions for subagent" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl mb-6 h-32 resize-vertical focus:outline-none focus:ring-2 ring-blue-500/50 focus:border-blue-500 placeholder:text-gray-500"></textarea>
+  <dialog id="taskModal" class="backdrop:bg-black/50 p-0 m-0 backdrop:backdrop-blur-sm">
+    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 max-w-2xl w-11/12 mx-auto max-h-[90vh] overflow-y-auto shadow-lg">
+      <h3 id="modalTitle" class="text-xl font-bold text-[var(--text)] mb-6">New Task</h3>
+      <input id="taskTitleInput" placeholder="Task Title" class="w-full bg-[var(--surface)] border border-[var(--border)] p-3 rounded-lg mb-4 text-base focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)] placeholder:text-[var(--text-secondary)]">
+      <textarea id="taskDescInput" placeholder="Description / Instructions for subagent" class="w-full bg-[var(--surface)] border border-[var(--border)] p-3 rounded-lg mb-4 h-28 resize-vertical focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)] placeholder:text-[var(--text-secondary)]"></textarea>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <select id="taskPrioritySelect" class="bg-gray-800 border border-gray-600 p-4 rounded-xl">
-          <option value="low">Low Priority 🟢</option>
-          <option value="medium">Medium Priority 🟡</option>
-          <option value="high">High Priority 🔴</option>
+        <select id="taskPrioritySelect" class="bg-[var(--surface)] border border-[var(--border)] p-3 rounded-lg text-sm">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
         </select>
-        <input id="taskSubagentInput" placeholder="Assigned Subagent ID (optional)" class="bg-gray-800 border border-gray-600 p-4 rounded-xl">
+        <input id="taskSubagentInput" placeholder="Subagent ID (optional)" class="bg-[var(--surface)] border border-[var(--border)] p-3 rounded-lg text-sm placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)]">
       </div>
       <div class="flex flex-wrap gap-3 justify-end">
         <button id="spawnButton" onclick="spawnSubagentForCurrent()" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all">🚀 Spawn Subagent</button>
