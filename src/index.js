@@ -176,7 +176,12 @@ export default {
       return new Response('OK', { status: 200 });
     }
 
-    return new Response('Not Found', { status: 404 });
+    return new Response(HTML, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
+    });
   },
 };
 
@@ -191,17 +196,17 @@ async function getAll(kv, prefix) {
   return items.filter(Boolean);
 }
 
-const HTML = `&lt;!DOCTYPE html&gt;
-&lt;html lang="en" class="dark"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-  &lt;title&gt;TARS Kanban Board&lt;/title&gt;
-  &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
-  &lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;
-  &lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;
-  &lt;link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&amp;display=swap" rel="stylesheet"&gt;
-  &lt;script&gt;
+const HTML = `<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TARS Kanban Board</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -212,93 +217,93 @@ const HTML = `&lt;!DOCTYPE html&gt;
         }
       }
     }
-  &lt;/script&gt;
-&lt;/head&gt;
-&lt;body class="bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white min-h-screen p-6 font-orbitron overflow-x-auto"&gt;
+  </script>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white min-h-screen p-6 font-orbitron overflow-x-auto">
 
-  &lt;!-- Login Modal --&gt;
-  &lt;div id="loginModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden"&gt;
-    &lt;div class="bg-gray-800/90 backdrop-blur-md p-12 rounded-2xl border border-cyan-500/30 shadow-2xl shadow-cyan-500/20 max-w-sm w-full mx-4"&gt;
-      &lt;h2 class="text-3xl font-bold text-cyan-400 mb-8 text-center"&gt;Enter API Key&lt;/h2&gt;
-      &lt;input id="apiKeyInput" type="password" placeholder="Your secret API key..." class="w-full bg-gray-700/50 border border-gray-600 p-4 rounded-xl text-lg mb-6 focus:outline-none focus:ring-4 ring-cyan-500/30 transition-all"&gt;
-      &lt;button onclick="login()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-lg font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"&gt;
+  <!-- Login Modal -->
+  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="bg-gray-800/90 backdrop-blur-md p-12 rounded-2xl border border-cyan-500/30 shadow-2xl shadow-cyan-500/20 max-w-sm w-full mx-4">
+      <h2 class="text-3xl font-bold text-cyan-400 mb-8 text-center">Enter API Key</h2>
+      <input id="apiKeyInput" type="password" placeholder="Your secret API key..." class="w-full bg-gray-700/50 border border-gray-600 p-4 rounded-xl text-lg mb-6 focus:outline-none focus:ring-4 ring-cyan-500/30 transition-all">
+      <button onclick="login()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-lg font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
         Access Kanban
-      &lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+      </button>
+    </div>
+  </div>
 
-  &lt;!-- Main App --&gt;
-  &lt;div id="app" class="hidden max-w-7xl mx-auto"&gt;
-    &lt;header class="flex flex-col sm:flex-row justify-between items-center mb-12 gap-4"&gt;
-      &lt;h1 class="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-2xl"&gt;
+  <!-- Main App -->
+  <div id="app" class="hidden max-w-7xl mx-auto">
+    <header class="flex flex-col sm:flex-row justify-between items-center mb-12 gap-4">
+      <h1 class="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-2xl">
         TARS KANBAN
-      &lt;/h1&gt;
-      &lt;div class="flex items-center gap-4"&gt;
-        &lt;select id="viewSelect" class="bg-gray-800 border border-gray-600 px-4 py-2 rounded-xl text-lg font-bold focus:ring-2 ring-cyan-500"&gt;
-          &lt;option value="kanban"&gt;Kanban Board&lt;/option&gt;
-          &lt;option value="dashboard"&gt;Subagents Dashboard&lt;/option&gt;
-        &lt;/select&gt;
-        &lt;button onclick="addNewTask()" class="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all"&gt;+ New Task&lt;/button&gt;
-        &lt;button onclick="logout()" class="bg-red-600 hover:bg-red-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all"&gt;Logout&lt;/button&gt;
-      &lt;/div&gt;
-    &lt;/header&gt;
+      </h1>
+      <div class="flex items-center gap-4">
+        <select id="viewSelect" class="bg-gray-800 border border-gray-600 px-4 py-2 rounded-xl text-lg font-bold focus:ring-2 ring-cyan-500">
+          <option value="kanban">Kanban Board</option>
+          <option value="dashboard">Subagents Dashboard</option>
+        </select>
+        <button onclick="addNewTask()" class="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all">+ New Task</button>
+        <button onclick="logout()" class="bg-red-600 hover:bg-red-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all">Logout</button>
+      </div>
+    </header>
 
-    &lt;!-- Kanban View --&gt;
-    &lt;div id="kanbanView" class="flex gap-6 pb-12"&gt;
-      &lt;div class="column flex-1 min-w-[320px]" data-status="todo"&gt;
-        &lt;h2 class="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent mb-6 text-center pb-2 border-b-4 border-orange-500/50"&gt;📋 To Do&lt;/h2&gt;
-        &lt;div class="cards min-h-[400px] space-y-4"&gt;&lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div class="column flex-1 min-w-[320px]" data-status="inprogress"&gt;
-        &lt;h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent mb-6 text-center pb-2 border-b-4 border-yellow-400/50"&gt;⚙️ In Progress&lt;/h2&gt;
-        &lt;div class="cards min-h-[400px] space-y-4"&gt;&lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div class="column flex-1 min-w-[320px]" data-status="done"&gt;
-        &lt;h2 class="text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent mb-6 text-center pb-2 border-b-4 border-green-500/50"&gt;✅ Done&lt;/h2&gt;
-        &lt;div class="cards min-h-[400px] space-y-4"&gt;&lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
+    <!-- Kanban View -->
+    <div id="kanbanView" class="flex gap-6 pb-12">
+      <div class="column flex-1 min-w-[320px]" data-status="todo">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent mb-6 text-center pb-2 border-b-4 border-orange-500/50">📋 To Do</h2>
+        <div class="cards min-h-[400px] space-y-4"></div>
+      </div>
+      <div class="column flex-1 min-w-[320px]" data-status="inprogress">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent mb-6 text-center pb-2 border-b-4 border-yellow-400/50">⚙️ In Progress</h2>
+        <div class="cards min-h-[400px] space-y-4"></div>
+      </div>
+      <div class="column flex-1 min-w-[320px]" data-status="done">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent mb-6 text-center pb-2 border-b-4 border-green-500/50">✅ Done</h2>
+        <div class="cards min-h-[400px] space-y-4"></div>
+      </div>
+    </div>
 
-    &lt;!-- Dashboard View --&gt;
-    &lt;div id="dashboardView" class="hidden"&gt;
-      &lt;h2 class="text-4xl font-bold mb-8 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"&gt;🤖 Active Subagents&lt;/h2&gt;
-      &lt;div id="subagentList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"&gt;&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+    <!-- Dashboard View -->
+    <div id="dashboardView" class="hidden">
+      <h2 class="text-4xl font-bold mb-8 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">🤖 Active Subagents</h2>
+      <div id="subagentList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+  </div>
 
-  &lt;!-- Task Edit Modal --&gt;
-  &lt;dialog id="taskModal" class="backdrop:bg-black/80 p-0 m-0 backdrop:backdrop-blur-md"&gt;
-    &lt;div class="bg-gray-900/95 border border-gray-700 rounded-3xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl shadow-black/50"&gt;
-      &lt;h3 id="modalTitle" class="text-3xl font-bold mb-6 text-cyan-400"&gt;New Task&lt;/h3&gt;
-      &lt;input id="taskTitleInput" placeholder="Task Title" class="w-full bg-gray-800 border border-gray-600 p-4 rounded-xl mb-4 text-xl focus:ring-2 ring-cyan-500"&gt;
-      &lt;textarea id="taskDescInput" placeholder="Description / Instructions for subagent" class="w-full bg-gray-800 border border-gray-600 p-4 rounded-xl mb-4 h-32 resize-vertical focus:ring-2 ring-cyan-500"&gt;&lt;/textarea&gt;
-      &lt;div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"&gt;
-        &lt;select id="taskPrioritySelect" class="bg-gray-800 border border-gray-600 p-4 rounded-xl"&gt;
-          &lt;option value="low"&gt;Low Priority 🟢&lt;/option&gt;
-          &lt;option value="medium"&gt;Medium Priority 🟡&lt;/option&gt;
-          &lt;option value="high"&gt;High Priority 🔴&lt;/option&gt;
-        &lt;/select&gt;
-        &lt;input id="taskSubagentInput" placeholder="Assigned Subagent ID (optional)" class="bg-gray-800 border border-gray-600 p-4 rounded-xl"&gt;
-      &lt;/div&gt;
-      &lt;div class="flex flex-wrap gap-3 justify-end"&gt;
-        &lt;button id="spawnButton" onclick="spawnSubagentForCurrent()" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all"&gt;🚀 Spawn Subagent&lt;/button&gt;
-        &lt;button onclick="saveCurrentTask()" class="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all"&gt;💾 Save&lt;/button&gt;
-        &lt;button onclick="deleteCurrentTask()" class="bg-red-600 hover:bg-red-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all"&gt;🗑️ Delete&lt;/button&gt;
-        &lt;button onclick="closeTaskModal()" class="bg-gray-600 hover:bg-gray-500 px-6 py-3 rounded-xl font-bold transition-all"&gt;❌ Cancel&lt;/button&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/dialog&gt;
+  <!-- Task Edit Modal -->
+  <dialog id="taskModal" class="backdrop:bg-black/80 p-0 m-0 backdrop:backdrop-blur-md">
+    <div class="bg-gray-900/95 border border-gray-700 rounded-3xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl shadow-black/50">
+      <h3 id="modalTitle" class="text-3xl font-bold mb-6 text-cyan-400">New Task</h3>
+      <input id="taskTitleInput" placeholder="Task Title" class="w-full bg-gray-800 border border-gray-600 p-4 rounded-xl mb-4 text-xl focus:ring-2 ring-cyan-500">
+      <textarea id="taskDescInput" placeholder="Description / Instructions for subagent" class="w-full bg-gray-800 border border-gray-600 p-4 rounded-xl mb-4 h-32 resize-vertical focus:ring-2 ring-cyan-500"></textarea>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <select id="taskPrioritySelect" class="bg-gray-800 border border-gray-600 p-4 rounded-xl">
+          <option value="low">Low Priority 🟢</option>
+          <option value="medium">Medium Priority 🟡</option>
+          <option value="high">High Priority 🔴</option>
+        </select>
+        <input id="taskSubagentInput" placeholder="Assigned Subagent ID (optional)" class="bg-gray-800 border border-gray-600 p-4 rounded-xl">
+      </div>
+      <div class="flex flex-wrap gap-3 justify-end">
+        <button id="spawnButton" onclick="spawnSubagentForCurrent()" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all">🚀 Spawn Subagent</button>
+        <button onclick="saveCurrentTask()" class="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all">💾 Save</button>
+        <button onclick="deleteCurrentTask()" class="bg-red-600 hover:bg-red-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all">🗑️ Delete</button>
+        <button onclick="closeTaskModal()" class="bg-gray-600 hover:bg-gray-500 px-6 py-3 rounded-xl font-bold transition-all">❌ Cancel</button>
+      </div>
+    </div>
+  </dialog>
 
-  &lt;!-- History Modal --&gt;
-  &lt;dialog id="historyModal" class="backdrop:bg-black/80 p-0 m-0 backdrop:backdrop-blur-md"&gt;
-    &lt;div class="bg-gray-900/95 border border-gray-700 rounded-3xl p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl"&gt;
-      &lt;h3 id="historyTitle" class="text-3xl font-bold mb-6 text-purple-400"&gt;Task History&lt;/h3&gt;
-      &lt;div id="historyContent" class="space-y-3 mb-8 text-sm"&gt;&lt;/div&gt;
-      &lt;button onclick="closeHistoryModal()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 py-4 px-8 rounded-xl font-bold text-lg shadow-lg transition-all"&gt;Close&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/dialog&gt;
+  <!-- History Modal -->
+  <dialog id="historyModal" class="backdrop:bg-black/80 p-0 m-0 backdrop:backdrop-blur-md">
+    <div class="bg-gray-900/95 border border-gray-700 rounded-3xl p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+      <h3 id="historyTitle" class="text-3xl font-bold mb-6 text-purple-400">Task History</h3>
+      <div id="historyContent" class="space-y-3 mb-8 text-sm"></div>
+      <button onclick="closeHistoryModal()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 py-4 px-8 rounded-xl font-bold text-lg shadow-lg transition-all">Close</button>
+    </div>
+  </dialog>
 
-  &lt;script&gt;
+  <script>
     const API_BASE = location.origin;
     let apiKey = localStorage.getItem('tarsApiKey') || '';
     let tasks = [];
@@ -326,7 +331,7 @@ const HTML = `&lt;!DOCTYPE html&gt;
     function setupEventListeners() {
       document.getElementById('viewSelect').addEventListener('change', switchView);
       // Drag & drop on columns
-      document.querySelectorAll('.column').forEach(col =&gt; {
+      document.querySelectorAll('.column').forEach(col => {
         col.addEventListener('dragover', allowDrop);
         col.addEventListener('drop', handleDrop);
       });
@@ -358,13 +363,13 @@ const HTML = `&lt;!DOCTYPE html&gt;
 
     function renderKanban() {
       const statusMap = { 'todo': 'todo', 'inprogress': 'inprogress', 'done': 'done' };
-      Object.entries(statusMap).forEach(([status, colStatus]) =&gt; {
+      Object.entries(statusMap).forEach(([status, colStatus]) => {
         const col = document.querySelector(\`[data-status="\${colStatus}"] .cards\`);
         col.innerHTML = '';
         tasks
-          .filter(task =&gt; task.status === status)
-          .sort((a, b) =&gt; priorityOrder(b.priority) - priorityOrder(a.priority))
-          .forEach(task =&gt; col.appendChild(createTaskCard(task)));
+          .filter(task => task.status === status)
+          .sort((a, b) => priorityOrder(b.priority) - priorityOrder(a.priority))
+          .forEach(task => col.appendChild(createTaskCard(task)));
       });
     }
 
@@ -378,23 +383,23 @@ const HTML = `&lt;!DOCTYPE html&gt;
       card.className = 'group bg-gray-800/70 hover:bg-gray-700 border border-gray-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/25 cursor-grab active:cursor-grabbing transition-all duration-300 draggable min-h-[120px] flex flex-col';
       card.draggable = true;
       card.dataset.taskId = task.id;
-      card.addEventListener('dragstart', (e) =&gt; e.dataTransfer.setData('text/plain', task.id));
+      card.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', task.id));
 
-      const subagent = subagents.find(s =&gt; s.taskId === task.id);
+      const subagent = subagents.find(s => s.taskId === task.id);
       const statusBadge = subagent ? getStatusBadge(subagent.status) : '';
 
       card.innerHTML = \`
-        &lt;div class="flex justify-between items-start mb-3"&gt;
-          &lt;h4 class="font-bold text-xl line-clamp-2 mb-2"\${task.title}&lt;/h4&gt;
+        <div class="flex justify-between items-start mb-3">
+          <h4 class="font-bold text-xl line-clamp-2 mb-2"\${task.title}</h4>
           \${getPriorityBadge(task.priority)}
-        &lt;/div&gt;
-        &lt;p class="text-gray-400 text-sm mb-4 flex-1 line-clamp-3"\${task.desc || ''}&lt;/p&gt;
+        </div>
+        <p class="text-gray-400 text-sm mb-4 flex-1 line-clamp-3"\${task.desc || ''}</p>
         \${statusBadge}
-        &lt;div class="actions opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 mt-auto pt-4 border-t border-gray-700"&gt;
-          &lt;button onclick="editTask('\${task.id}')" class="p-2 hover:bg-blue-600 rounded-xl transition-colors"&gt;✏️&lt;/button&gt;
-          &lt;button onclick="viewTaskHistory('\${task.id}')" class="p-2 hover:bg-purple-600 rounded-xl transition-colors"&gt;📜&lt;/button&gt;
-          \${task.assigned ? \`&lt;span class="text-xs bg-gray-600 px-2 py-1 rounded-full"&gt;\${task.assigned.slice(0,8)}...\lt;/span&gt;\` : ''}
-        &lt;/div&gt;
+        <div class="actions opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 mt-auto pt-4 border-t border-gray-700">
+          <button onclick="editTask('\${task.id}')" class="p-2 hover:bg-blue-600 rounded-xl transition-colors">✏️</button>
+          <button onclick="viewTaskHistory('\${task.id}')" class="p-2 hover:bg-purple-600 rounded-xl transition-colors">📜</button>
+          \${task.assigned ? \`<span class="text-xs bg-gray-600 px-2 py-1 rounded-full">\${task.assigned.slice(0,8)}...\lt;/span>\` : ''}
+        </div>
       \`;
       return card;
     }
@@ -406,7 +411,7 @@ const HTML = `&lt;!DOCTYPE html&gt;
         high: '🔴 bg-red-500/20 text-red-400 border-red-400/50'
       };
       const c = colors[priority] || 'bg-gray-500/20 text-gray-400 border-gray-400/50';
-      return \`&lt;span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-bold border \${c}"&gt;\${priority.toUpperCase()}\lt;/span&gt;\`;
+      return \`<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-bold border \${c}">\${priority.toUpperCase()}\lt;/span>\`;
     }
 
     function getStatusBadge(status) {
@@ -417,27 +422,27 @@ const HTML = `&lt;!DOCTYPE html&gt;
         failed: 'bg-red-500/20 text-red-400 border-red-500/50'
       };
       const c = colors[status] || 'bg-gray-500/20 text-gray-400';
-      return \`&lt;span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-bold border font-mono \${c}"&gt;● \${status.toUpperCase()}\lt;/span&gt;\`;
+      return \`<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-bold border font-mono \${c}">● \${status.toUpperCase()}\lt;/span>\`;
     }
 
     function renderDashboard() {
       const list = document.getElementById('subagentList');
       list.innerHTML = subagents
-        .sort((a, b) =&gt; new Date(b.started || 0) - new Date(a.started || 0))
-        .map(sub =&gt; {
-          const task = tasks.find(t =&gt; t.id === sub.taskId);
+        .sort((a, b) => new Date(b.started || 0) - new Date(a.started || 0))
+        .map(sub => {
+          const task = tasks.find(t => t.id === sub.taskId);
           return \`
-            &lt;div class="bg-gray-800/50 border border-gray-600 rounded-2xl p-8 hover:bg-gray-700/50 transition-all shadow-xl hover:shadow-2xl hover:shadow-blue-500/20"&gt;
-              &lt;h4 class="text-xl font-bold mb-2 \${task ? '' : 'text-gray-500'}"&gt;\${task ? task.title.slice(0,50) + '...' : 'No Task'}\lt;/h4&gt;
-              &lt;p class="text-sm text-gray-400 mb-4"&gt;ID: \${sub.id}&lt;/p&gt;
+            <div class="bg-gray-800/50 border border-gray-600 rounded-2xl p-8 hover:bg-gray-700/50 transition-all shadow-xl hover:shadow-2xl hover:shadow-blue-500/20">
+              <h4 class="text-xl font-bold mb-2 \${task ? '' : 'text-gray-500'}">\${task ? task.title.slice(0,50) + '...' : 'No Task'}\lt;/h4>
+              <p class="text-sm text-gray-400 mb-4">ID: \${sub.id}</p>
               \${getStatusBadge(sub.status)}
-              &lt;div class="flex gap-2 mt-6"&gt;
-                &lt;button onclick="manageSubagent('\${sub.id}', 'kill')" class="flex-1 bg-red-600 hover:bg-red-500 py-2 px-4 rounded-xl font-bold transition-all"&gt;Kill&lt;/button&gt;
-                \${task ? \`&lt;button onclick="editTask('\${task.id}')" class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 px-4 rounded-xl font-bold transition-all"&gt;View Task&lt;/button&gt;\` : ''}
-              &lt;/div&gt;
-            &lt;/div&gt;
+              <div class="flex gap-2 mt-6">
+                <button onclick="manageSubagent('\${sub.id}', 'kill')" class="flex-1 bg-red-600 hover:bg-red-500 py-2 px-4 rounded-xl font-bold transition-all">Kill</button>
+                \${task ? \`<button onclick="editTask('\${task.id}')" class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 px-4 rounded-xl font-bold transition-all">View Task</button>\` : ''}
+              </div>
+            </div>
           \`;
-        }).join('') || '&lt;p class="col-span-full text-center text-gray-500 py-20 text-xl"&gt;No active subagents.&lt;/p&gt;';
+        }).join('') || '<p class="col-span-full text-center text-gray-500 py-20 text-xl">No active subagents.</p>';
     }
 
     function allowDrop(e) {
@@ -448,8 +453,8 @@ const HTML = `&lt;!DOCTYPE html&gt;
       e.preventDefault();
       const taskId = e.dataTransfer.getData('text/plain');
       const newStatus = e.currentTarget.dataset.status;
-      const task = tasks.find(t =&gt; t.id === taskId);
-      if (task &amp;&amp; task.status !== newStatus) {
+      const task = tasks.find(t => t.id === taskId);
+      if (task && task.status !== newStatus) {
         task.status = newStatus;
         task.updated = Date.now();
         if (!task.history) task.history = [];
@@ -489,7 +494,7 @@ const HTML = `&lt;!DOCTYPE html&gt;
     }
 
     function editTask(taskId) {
-      const task = tasks.find(t =&gt; t.id === taskId);
+      const task = tasks.find(t => t.id === taskId);
       if (!task) return;
       currentTaskId = taskId;
       isEditing = true;
@@ -516,7 +521,7 @@ const HTML = `&lt;!DOCTYPE html&gt;
         updated: Date.now()
       };
       if (isEditing) {
-        const oldTask = tasks.find(t =&gt; t.id === currentTaskId);
+        const oldTask = tasks.find(t => t.id === currentTaskId);
         task.status = oldTask.status;
         task.history = oldTask.history || [];
         task.created = oldTask.created;
@@ -572,7 +577,7 @@ const HTML = `&lt;!DOCTYPE html&gt;
     }
 
     function viewTaskHistory(taskId) {
-      const task = tasks.find(t =&gt; t.id === taskId);
+      const task = tasks.find(t => t.id === taskId);
       if (!task || !task.history?.length) {
         alert('No history available.');
         return;
@@ -580,13 +585,13 @@ const HTML = `&lt;!DOCTYPE html&gt;
       document.getElementById('historyTitle').textContent = \`History for: \${task.title}\`;
       const content = document.getElementById('historyContent');
       content.innerHTML = task.history
-        .sort((a, b) =&gt; b.ts - a.ts)
-        .map(h =&gt; \`
-          &lt;div class="bg-gray-800 p-4 rounded-xl border-l-4 border-blue-500"&gt;
-            &lt;div class="font-bold text-cyan-400"\${new Date(h.ts).toLocaleString()}\lt;/div&gt;
-            &lt;div class="text-lg font-bold capitalize"\${h.event}&lt;/div&gt;
-            \${h.log ? \`&lt;p class="text-gray-300 mt-1"\${h.log}&lt;/p&gt;\` : ''}
-          &lt;/div&gt;
+        .sort((a, b) => b.ts - a.ts)
+        .map(h => \`
+          <div class="bg-gray-800 p-4 rounded-xl border-l-4 border-blue-500">
+            <div class="font-bold text-cyan-400"\${new Date(h.ts).toLocaleString()}\lt;/div>
+            <div class="text-lg font-bold capitalize"\${h.event}</div>
+            \${h.log ? \`<p class="text-gray-300 mt-1"\${h.log}</p>\` : ''}
+          </div>
         \`).join('');
       document.getElementById('historyModal').showModal();
     }
@@ -620,11 +625,11 @@ const HTML = `&lt;!DOCTYPE html&gt;
     }
 
     // Global drag setup (re-attach on render if needed)
-    document.addEventListener('dragstart', (e) =&gt; {
+    document.addEventListener('dragstart', (e) => {
       if (e.target.classList.contains('draggable')) {
         e.dataTransfer.effectAllowed = 'move';
       }
     });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;`;
+  </script>
+</body>
+</html>`;
