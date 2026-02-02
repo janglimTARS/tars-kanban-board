@@ -413,16 +413,7 @@ const HTML = `<!DOCTYPE html>
         filteredTasks.forEach(task => col.appendChild(createTaskCard(task)));
         if (filteredTasks.length === 0) {
           const statusName = status.charAt(0).toUpperCase() + status.slice(1);
-          col.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-[500px] p-12 text-center select-none">
-              <div class="w-24 h-24 bg-[var(--surface)]/50 rounded-3xl flex items-center justify-center mb-8 shadow-xl backdrop-blur-sm">
-                <span class="text-4xl">📂</span>
-              </div>
-              <h4 class="text-2xl font-semibold text-[var(--text)] mb-4">${statusName} is empty</h4>
-              <p class="text-base text-[var(--text-secondary)] mb-8 max-w-sm">Drag tasks into this column or create a new one to get started.</p>
-              <button onclick="addNewTask()" class="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-8 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 whitespace-nowrap text-sm">+ Create new task</button>
-            </div>
-          `;
+          col.innerHTML = '<div class="empty-state flex flex-col items-center justify-center min-h-[500px] py-20 text-center text-[var(--text-secondary)]"><div class="text-5xl mb-6 opacity-50">📭</div><h4 class="text-xl font-semibold mb-2 text-[var(--text)]">' + statusName + ' is empty</h4><p class="text-sm max-w-md">Drag tasks here or <a href="#" onclick="addNewTask();return false;" class="text-[var(--accent)] hover:underline font-medium">create a new one</a>.</p></div>';
         }
       });
     }
