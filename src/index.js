@@ -232,6 +232,18 @@ const HTML = `<!DOCTYPE html>
       font-weight: 600;
       line-height: 1.25;
     }
+    .dragging {
+      opacity: 0.85 !important;
+      transform: translateY(-4px) scale(1.03) !important;
+      z-index: 50 !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(91, 141, 239, 0.4) !important;
+    }
+    .column.drag-over {
+      background: rgba(91, 141, 239, 0.15) !important;
+      border-color: #5b8def !important;
+      box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.3) !important;
+      transform: translateY(-2px) !important;
+    }
     .text-caption {
       font-size: 0.875rem;
       color: var(--text-secondary);
@@ -349,11 +361,19 @@ const HTML = `<!DOCTYPE html>
       setupEventListeners();
     }
 
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drag-over');
+    }
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
     function setupEventListeners() {
       document.getElementById('viewSelect').addEventListener('change', switchView);
       // Drag & drop on columns
       document.querySelectorAll('.column').forEach(col => {
-        col.addEventListener('dragover', allowDrop);
+        col.addEventListener('dragover', handleDragOver);
+        col.addEventListener('dragleave', handleDragLeave);
         col.addEventListener('drop', handleDrop);
       });
     }
@@ -387,10 +407,23 @@ const HTML = `<!DOCTYPE html>
       Object.entries(statusMap).forEach(([status, colStatus]) => {
         const col = document.querySelector(\`[data-status="\${colStatus}"] .cards\`);
         col.innerHTML = '';
-        tasks
+        const filteredTasks = tasks
           .filter(task => task.status === status)
-          .sort((a, b) => priorityOrder(b.priority) - priorityOrder(a.priority))
-          .forEach(task => col.appendChild(createTaskCard(task)));
+          .sort((a, b) => priorityOrder(b.priority) - priorityOrder(a.priority));
+        filteredTasks.forEach(task => col.appendChild(createTaskCard(task)));
+        if (filteredTasks.length === 0) {
+          const statusName = status.charAt(0).toUpperCase() + status.slice(1);
+          col.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-[500px] p-12 text-center select-none">
+              <div class="w-24 h-24 bg-[var(--surface)]/50 rounded-3xl flex items-center justify-center mb-8 shadow-xl backdrop-blur-sm">
+                <span class="text-4xl">📂</span>
+              </div>
+              <h4 class="text-2xl font-semibold text-[var(--text)] mb-4">${statusName} is empty</h4>
+              <p class="text-base text-[var(--text-secondary)] mb-8 max-w-sm">Drag tasks into this column or create a new one to get started.</p>
+              <button onclick="addNewTask()" class="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-8 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 whitespace-nowrap text-sm">+ Create new task</button>
+            </div>
+          `;
+        }
       });
     }
 
@@ -648,7 +681,13 @@ const HTML = `<!DOCTYPE html>
     // Global drag setup (re-attach on render if needed)
     document.addEventListener('dragstart', (e) => {
       if (e.target.classList.contains('draggable')) {
+        e.target.classList.add('dragging');
         e.dataTransfer.effectAllowed = 'move';
+      }
+    });
+    document.addEventListener('dragend', (e) => {
+      if (e.target.classList.contains('draggable')) {
+        e.target.classList.remove('dragging');
       }
     });
   </script>
