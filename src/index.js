@@ -190,7 +190,7 @@ async function getAll(kv, prefix) {
   const items = await Promise.all(
     keys.map(async (k) => {
       const value = await kv.get(k.name);
-      return value ? JSON.parse(value) : null;
+      if (value) {\n        const obj = JSON.parse(value);\n        obj.id = k.name.split(':')[1];\n        obj.status = obj.status ? obj.status.toLowerCase() : 'todo';\n        return obj;\n      }\n      return null;
     })
   );
   return items.filter(Boolean);
