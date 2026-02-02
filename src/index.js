@@ -243,7 +243,7 @@ const HTML = `<!DOCTYPE html>
 
   <!-- Login Modal -->
   <div id="loginModal" class="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 hidden">
-    <div class="bg-[var(--surface)] border border-[var(--border)] p-6 rounded-xl shadow-md max-w-sm w-full mx-4">
+    <div class="bg-[var(--surface)] border border-[var(--border)] p-8 rounded-2xl shadow-xl max-w-sm w-full mx-4 backdrop-blur-sm">
       <h2 class="text-xl font-bold text-[var(--text)] mb-6 text-center">Authenticate</h2>
       <input id="apiKeyInput" type="password" placeholder="API key" class="w-full bg-[var(--surface)] border border-[var(--border)] p-3 rounded-lg text-sm placeholder:text-[var(--text-secondary)] mb-4 focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)] transition-all">
       <button onclick="login()" class="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--text)] font-semibold py-3 px-6 rounded-lg shadow-sm hover:shadow-md transition-all">
@@ -271,15 +271,15 @@ const HTML = `<!DOCTYPE html>
 
     <!-- Kanban View -->
     <div id="kanbanView" class="flex gap-6 pb-12 flex-wrap lg:flex-nowrap overflow-x-auto -mr-8 pr-8 lg:mr-0 lg:pr-0 scrollbar-thin scrollbar-thumb-[var(--surface)] scrollbar-track-transparent">
-      <div class="column flex-1 min-w-[320px]" data-status="todo">
+      <div class="column flex-1 min-w-[320px] bg-[var(--surface)]/10 backdrop-blur-sm border border-[var(--border)]/50 rounded-3xl p-8 shadow-xl group hover:shadow-2xl hover:bg-[var(--surface)]/20 transition-all duration-300" data-status="todo">
         <h2 class="text-2xl font-semibold text-[var(--text)] mb-6 pb-2.5 border-b border-[var(--border)] text-center">To Do</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
-      <div class="column flex-1 min-w-[320px]" data-status="inprogress">
+      <div class="column flex-1 min-w-[320px] bg-[var(--surface)]/10 backdrop-blur-sm border border-[var(--border)]/50 rounded-3xl p-8 shadow-xl group hover:shadow-2xl hover:bg-[var(--surface)]/20 transition-all duration-300" data-status="inprogress">
         <h2 class="text-2xl font-semibold text-[var(--text)] mb-6 pb-2.5 border-b border-[var(--border)] text-center">In Progress</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
-      <div class="column flex-1 min-w-[320px]" data-status="done">
+      <div class="column flex-1 min-w-[320px] bg-[var(--surface)]/10 backdrop-blur-sm border border-[var(--border)]/50 rounded-3xl p-8 shadow-xl group hover:shadow-2xl hover:bg-[var(--surface)]/20 transition-all duration-300" data-status="done">
         <h2 class="text-2xl font-semibold text-[var(--text)] mb-6 pb-2.5 border-b border-[var(--border)] text-center">Done</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
@@ -294,7 +294,7 @@ const HTML = `<!DOCTYPE html>
 
   <!-- Task Edit Modal -->
   <dialog id="taskModal" class="backdrop:bg-black/50 p-0 m-0 backdrop:backdrop-blur-sm">
-    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 max-w-2xl w-11/12 mx-auto max-h-[90vh] overflow-y-auto shadow-lg">
+    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-8 max-w-2xl w-11/12 mx-auto max-h-[90vh] overflow-y-auto shadow-xl backdrop-blur-sm">
       <h3 id="modalTitle" class="text-xl font-semibold text-[var(--text)] mb-6">New Task</h3>
       <input id="taskTitleInput" placeholder="Task Title" class="w-full bg-[var(--surface)] border border-[var(--border)] p-3 rounded-lg mb-4 text-base focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)] placeholder:text-[var(--text-secondary)]">
       <textarea id="taskDescInput" placeholder="Description / Instructions for subagent" class="w-full bg-[var(--surface)] border border-[var(--border)] p-3 rounded-lg mb-4 h-28 resize-vertical focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)] placeholder:text-[var(--text-secondary)]"></textarea>
@@ -401,7 +401,7 @@ const HTML = `<!DOCTYPE html>
 
     function createTaskCard(task) {
       const card = document.createElement('div');
-      card.className = 'group bg-gray-800/70 hover:bg-gray-700 border border-gray-600 rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/25 cursor-grab active:cursor-grabbing transition-all duration-300 draggable min-h-[120px] flex flex-col';
+      card.className = 'group bg-[var(--surface)] hover:bg-[var(--surface-hover)] border border-[var(--border)] rounded-2xl p-6 shadow-lg hover:shadow-xl hover:shadow-[var(--accent)]/20 cursor-grab active:cursor-grabbing transition-all duration-300 ease-out draggable min-h-[140px] flex flex-col';
       card.draggable = true;
       card.dataset.taskId = task.id;
       card.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', task.id));
