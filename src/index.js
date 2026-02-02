@@ -201,32 +201,17 @@ const HTML = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TARS Kanban Board</title>
+  <title>Kanban Board</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            'orbitron': ['Orbitron', 'monospace'],
-          },
-        }
-      }
-    }
-  </script>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white min-h-screen p-6 font-orbitron overflow-x-auto">
+<body class="bg-gray-900 text-gray-100 min-h-screen p-8 antialiased overflow-x-auto">
 
   <!-- Login Modal -->
-  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-    <div class="bg-gray-800/90 backdrop-blur-md p-12 rounded-2xl border border-cyan-500/30 shadow-2xl shadow-cyan-500/20 max-w-sm w-full mx-4">
-      <h2 class="text-3xl font-bold text-cyan-400 mb-8 text-center">Enter API Key</h2>
-      <input id="apiKeyInput" type="password" placeholder="Your secret API key..." class="w-full bg-gray-700/50 border border-gray-600 p-4 rounded-xl text-lg mb-6 focus:outline-none focus:ring-4 ring-cyan-500/30 transition-all">
-      <button onclick="login()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-lg font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+  <div id="loginModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div class="bg-gray-900 border border-gray-700 p-10 rounded-2xl shadow-2xl max-w-sm w-full mx-4">
+      <h2 class="text-2xl font-bold text-gray-100 mb-8 text-center">Enter API Key</h2>
+      <input id="apiKeyInput" type="password" placeholder="Your secret API key..." class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-colors">
+      <button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-4 px-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
         Access Kanban
       </button>
     </div>
@@ -234,12 +219,12 @@ const HTML = `<!DOCTYPE html>
 
   <!-- Main App -->
   <div id="app" class="hidden max-w-7xl mx-auto">
-    <header class="flex flex-col sm:flex-row justify-between items-center mb-12 gap-4">
-      <h1 class="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-2xl">
+    <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-16 gap-6">
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-100">
         TARS KANBAN
       </h1>
       <div class="flex items-center gap-4">
-        <select id="viewSelect" class="bg-gray-800 border border-gray-600 px-4 py-2 rounded-xl text-lg font-bold focus:ring-2 ring-cyan-500">
+        <select id="viewSelect" class="bg-gray-800 border border-gray-700 px-4 py-2 rounded-lg text-lg font-medium focus:outline-none focus:ring-2 ring-blue-500 focus:border-blue-500">
           <option value="kanban">Kanban Board</option>
           <option value="dashboard">Subagents Dashboard</option>
         </select>
@@ -249,24 +234,24 @@ const HTML = `<!DOCTYPE html>
     </header>
 
     <!-- Kanban View -->
-    <div id="kanbanView" class="flex gap-6 pb-12">
+    <div id="kanbanView" class="flex gap-8 pb-20 flex-wrap lg:flex-nowrap">
       <div class="column flex-1 min-w-[320px]" data-status="todo">
-        <h2 class="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent mb-6 text-center pb-2 border-b-4 border-orange-500/50">📋 To Do</h2>
+        <h2 class="text-2xl font-bold text-white mb-8 pb-4 border-b border-gray-700 text-center">To Do</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
       <div class="column flex-1 min-w-[320px]" data-status="inprogress">
-        <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent mb-6 text-center pb-2 border-b-4 border-yellow-400/50">⚙️ In Progress</h2>
+        <h2 class="text-2xl font-bold text-white mb-8 pb-4 border-b border-gray-700 text-center">In Progress</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
       <div class="column flex-1 min-w-[320px]" data-status="done">
-        <h2 class="text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent mb-6 text-center pb-2 border-b-4 border-green-500/50">✅ Done</h2>
+        <h2 class="text-2xl font-bold text-white mb-8 pb-4 border-b border-gray-700 text-center">Done</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
     </div>
 
     <!-- Dashboard View -->
     <div id="dashboardView" class="hidden">
-      <h2 class="text-4xl font-bold mb-8 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">🤖 Active Subagents</h2>
+      <h2 class="text-3xl font-bold text-gray-100 mb-12">Active Subagents</h2>
       <div id="subagentList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
   </div>
@@ -274,9 +259,9 @@ const HTML = `<!DOCTYPE html>
   <!-- Task Edit Modal -->
   <dialog id="taskModal" class="backdrop:bg-black/80 p-0 m-0 backdrop:backdrop-blur-md">
     <div class="bg-gray-900/95 border border-gray-700 rounded-3xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl shadow-black/50">
-      <h3 id="modalTitle" class="text-3xl font-bold mb-6 text-cyan-400">New Task</h3>
-      <input id="taskTitleInput" placeholder="Task Title" class="w-full bg-gray-800 border border-gray-600 p-4 rounded-xl mb-4 text-xl focus:ring-2 ring-cyan-500">
-      <textarea id="taskDescInput" placeholder="Description / Instructions for subagent" class="w-full bg-gray-800 border border-gray-600 p-4 rounded-xl mb-4 h-32 resize-vertical focus:ring-2 ring-cyan-500"></textarea>
+      <h3 id="modalTitle" class="text-2xl font-bold mb-8 text-gray-100">New Task</h3>
+      <input id="taskTitleInput" placeholder="Task Title" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl mb-6 text-xl focus:outline-none focus:ring-2 ring-blue-500/50 focus:border-blue-500 placeholder:text-gray-500">
+      <textarea id="taskDescInput" placeholder="Description / Instructions for subagent" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl mb-6 h-32 resize-vertical focus:outline-none focus:ring-2 ring-blue-500/50 focus:border-blue-500 placeholder:text-gray-500"></textarea>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <select id="taskPrioritySelect" class="bg-gray-800 border border-gray-600 p-4 rounded-xl">
           <option value="low">Low Priority 🟢</option>
