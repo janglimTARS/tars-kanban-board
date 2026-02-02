@@ -223,11 +223,18 @@ const HTML = `<!DOCTYPE html>
     }
     body {
       font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-      line-height: 1.5;
-      font-weight: 500;
+      font-size: 15px;
+      line-height: 1.6;
+      font-weight: 400;
+      letter-spacing: -0.01em;
     }
-    h1, h2, h3 {
-      font-weight: 700;
+    h1, h2, h3, h4 {
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    .text-caption {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
     }
   </style>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -257,7 +264,7 @@ const HTML = `<!DOCTYPE html>
           <option value="dashboard">Subagents</option>
         </select>
         <input id="searchInput" type="text" placeholder="Search tasks..." class="flex-1 max-w-sm min-w-[250px] bg-[var(--surface)] border border-[var(--border)] px-4 py-2 rounded-lg placeholder:text-[var(--text-secondary)] text-sm focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)]">
-        <button onclick="addNewTask()" class="bg-[var(--success)] hover:bg-[var(--success)]/90 text-white px-6 py-2.5 rounded-lg font-semibold shadow-sm hover:shadow-md transition-all min-w-[120px]">+ New Task</button>
+        <button onclick="addNewTask()" class="bg-[var(--success)] hover:bg-[var(--success)]/90 text-white px-6 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all min-w-[120px]">+ New Task</button>
         <button onclick="logout()" class="bg-red-600 hover:bg-red-500 px-6 py-3 rounded-xl font-bold shadow-lg transition-all">Logout</button>
       </div>
     </header>
@@ -265,22 +272,22 @@ const HTML = `<!DOCTYPE html>
     <!-- Kanban View -->
     <div id="kanbanView" class="flex gap-6 pb-12 flex-wrap lg:flex-nowrap overflow-x-auto -mr-8 pr-8 lg:mr-0 lg:pr-0 scrollbar-thin scrollbar-thumb-[var(--surface)] scrollbar-track-transparent">
       <div class="column flex-1 min-w-[320px]" data-status="todo">
-        <h2 class="text-xl font-bold text-[var(--text)] mb-6 pb-2.5 border-b border-[var(--border)] text-center">To Do</h2>
+        <h2 class="text-2xl font-semibold text-[var(--text)] mb-6 pb-2.5 border-b border-[var(--border)] text-center">To Do</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
       <div class="column flex-1 min-w-[320px]" data-status="inprogress">
-        <h2 class="text-2xl font-bold text-white mb-8 pb-4 border-[var(--border)] text-center">In Progress</h2>
+        <h2 class="text-2xl font-semibold text-[var(--text)] mb-6 pb-2.5 border-b border-[var(--border)] text-center">In Progress</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
       <div class="column flex-1 min-w-[320px]" data-status="done">
-        <h2 class="text-2xl font-bold text-white mb-8 pb-4 border-[var(--border)] text-center">Done</h2>
+        <h2 class="text-2xl font-semibold text-[var(--text)] mb-6 pb-2.5 border-b border-[var(--border)] text-center">Done</h2>
         <div class="cards min-h-[400px] space-y-4"></div>
       </div>
     </div>
 
     <!-- Dashboard View -->
     <div id="dashboardView" class="hidden">
-      <h2 class="text-3xl font-bold text-gray-100 mb-12">Active Subagents</h2>
+      <h2 class="text-3xl font-semibold text-[var(--text)] mb-12">Active Subagents</h2>
       <div id="subagentList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
   </div>
@@ -288,7 +295,7 @@ const HTML = `<!DOCTYPE html>
   <!-- Task Edit Modal -->
   <dialog id="taskModal" class="backdrop:bg-black/50 p-0 m-0 backdrop:backdrop-blur-sm">
     <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 max-w-2xl w-11/12 mx-auto max-h-[90vh] overflow-y-auto shadow-lg">
-      <h3 id="modalTitle" class="text-xl font-bold text-[var(--text)] mb-6">New Task</h3>
+      <h3 id="modalTitle" class="text-xl font-semibold text-[var(--text)] mb-6">New Task</h3>
       <input id="taskTitleInput" placeholder="Task Title" class="w-full bg-[var(--surface)] border border-[var(--border)] p-3 rounded-lg mb-4 text-base focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)] placeholder:text-[var(--text-secondary)]">
       <textarea id="taskDescInput" placeholder="Description / Instructions for subagent" class="w-full bg-[var(--surface)] border border-[var(--border)] p-3 rounded-lg mb-4 h-28 resize-vertical focus:outline-none focus:ring-2 ring-[var(--accent)]/50 focus:border-[var(--accent)] placeholder:text-[var(--text-secondary)]"></textarea>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -311,7 +318,7 @@ const HTML = `<!DOCTYPE html>
   <!-- History Modal -->
   <dialog id="historyModal" class="backdrop:bg-black/80 p-0 m-0 backdrop:backdrop-blur-md">
     <div class="bg-gray-900/95 border border-gray-700 rounded-3xl p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
-      <h3 id="historyTitle" class="text-3xl font-bold mb-6 text-purple-400">Task History</h3>
+      <h3 id="historyTitle" class="text-2xl font-semibold mb-6 text-[var(--accent)]">Task History</h3>
       <div id="historyContent" class="space-y-3 mb-8 text-sm"></div>
       <button onclick="closeHistoryModal()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 py-4 px-8 rounded-xl font-bold text-lg shadow-lg transition-all">Close</button>
     </div>
@@ -404,10 +411,10 @@ const HTML = `<!DOCTYPE html>
 
       card.innerHTML = \`
         <div class="flex justify-between items-start mb-3">
-          <h4 class="font-bold text-xl line-clamp-2 mb-2"\${task.title}</h4>
+          <h4 class="font-semibold text-lg leading-tight line-clamp-2 mb-3"\${task.title}</h4>
           \${getPriorityBadge(task.priority)}
         </div>
-        <p class="text-gray-400 text-sm mb-4 flex-1 line-clamp-3"\${task.desc || ''}</p>
+        <p class="text-[var(--text-secondary)] text-sm leading-relaxed flex-1 line-clamp-3 mb-4"\${task.desc || ''}</p>
         \${statusBadge}
         <div class="actions opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 mt-auto pt-4 border-t border-gray-700">
           <button onclick="editTask('\${task.id}')" class="p-2 hover:bg-blue-600 rounded-xl transition-colors">✏️</button>
