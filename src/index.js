@@ -470,7 +470,7 @@ const HTML = `<!DOCTYPE html>
           .filter(task => task.status === status)
           .sort((a, b) => priorityOrder(b.priority) - priorityOrder(a.priority));
         const statusName = status.charAt(0).toUpperCase() + status.slice(1);
-        const columnHeader = document.querySelector(`[data-status="${status}"] h2`);
+        const columnHeader = document.querySelector('[data-status="' + status + '"] h2');
         columnHeader.innerHTML = `${statusName} <span class="ml-2 px-3 py-1 bg-[var(--surface)]/80 backdrop-blur text-xs font-semibold text-[var(--text-secondary)] rounded-full">${filteredTasks.length}</span>`;
         filteredTasks.forEach(task => col.appendChild(createTaskCard(task)));
         if (filteredTasks.length === 0) {
