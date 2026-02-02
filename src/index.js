@@ -345,6 +345,57 @@ const HTML = `<!DOCTYPE html>
   </dialog>
 
   <script>
+    const SAMPLE_TASKS = [
+      {
+        id: 'demo-research-ui',
+        title: 'Research professional Kanban UI patterns',
+        desc: 'Study Linear.app, GitHub Projects, Jira, Trello. Focus on drag animations, responsive design, dark mode contrast, card interactions, and subtle hover states.',
+        priority: 'medium',
+        status: 'done',
+        created: Date.now() - 86400000 * 3,
+        updated: Date.now() - 86400000 * 1,
+        history: [
+          {ts: Date.now() - 86400000 * 2, event: 'moved', log: 'Moved to Done'}
+        ]
+      },
+      {
+        id: 'demo-dark-mode',
+        title: 'Implement dark mode with proper contrast',
+        desc: 'Add CSS variables for dark theme. Ensure AA/AAA contrast ratios. Test on multiple devices. Use Inter font for professional look.',
+        priority: 'high',
+        status: 'done',
+        created: Date.now() - 86400000 * 5,
+        updated: Date.now() - 86400000 * 2,
+        history: [
+          {ts: Date.now() - 86400000 * 3, event: 'moved', log: 'Completed dark mode implementation'}
+        ]
+      },
+      {
+        id: 'demo-dragdrop',
+        title: 'Add drag-and-drop functionality',
+        desc: 'Implement smooth drag animations, column drop zones, task reordering within columns. Use HTML5 Drag API with custom visual feedback.',
+        priority: 'high',
+        status: 'inprogress',
+        created: Date.now() - 86400000 * 2,
+        updated: Date.now(),
+        history: [
+          {ts: Date.now() - 86400000 * 1, event: 'moved', log: 'Moved to In Progress'}
+        ]
+      },
+      {
+        id: 'demo-deploy',
+        title: 'Set up Cloudflare Workers deployment',
+        desc: 'Configure wrangler.toml with KV namespaces. Set up CI/CD with GitHub Actions. Deploy to custom domain with HTTPS.',
+        priority: 'low',
+        status: 'done',
+        created: Date.now() - 86400000 * 7,
+        updated: Date.now() - 86400000 * 4,
+        history: [
+          {ts: Date.now() - 86400000 * 5, event: 'deployed', log: 'Successfully deployed to production'}
+        ]
+      }
+    ];
+
     const API_BASE = location.origin;
     let apiKey = localStorage.getItem('tarsApiKey') || '';
     let tasks = [];
