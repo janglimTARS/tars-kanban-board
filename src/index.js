@@ -471,7 +471,7 @@ const HTML = `<!DOCTYPE html>
           .sort((a, b) => priorityOrder(b.priority) - priorityOrder(a.priority));
         const statusName = status.charAt(0).toUpperCase() + status.slice(1);
         const columnHeader = document.querySelector(`[data-status="${status}"] h2`);
-        columnHeader.innerHTML = \`${statusName} <span class="ml-2 px-3 py-1 bg-[var(--surface)]/80 backdrop-blur text-xs font-semibold text-[var(--text-secondary)] rounded-full">\${filteredTasks.length}</span>\`;
+        columnHeader.innerHTML = `${statusName} <span class="ml-2 px-3 py-1 bg-[var(--surface)]/80 backdrop-blur text-xs font-semibold text-[var(--text-secondary)] rounded-full">${filteredTasks.length}</span>`;
         filteredTasks.forEach(task => col.appendChild(createTaskCard(task)));
         if (filteredTasks.length === 0) {
           col.innerHTML = '<div class="empty-state flex flex-col items-center justify-center min-h-[500px] py-20 text-center text-[var(--text-secondary)]"><div class="text-5xl mb-6 opacity-50">📭</div><h4 class="text-xl font-semibold mb-2 text-[var(--text)]">' + statusName + ' is empty</h4><p class="text-sm max-w-md">Drag tasks here or <a href="#" onclick="addNewTask();return false;" class="text-[var(--accent)] hover:underline font-medium">create a new one</a>.</p></div>';
